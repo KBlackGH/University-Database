@@ -1,0 +1,86 @@
+CREATE TABLE Instructor
+	(Staff_ID INTEGER,
+	Name CHAR(20),
+	PRIMARY KEY (Staff_ID)
+);
+
+CREATE TABLE Department
+	(Department_ID INTEGER,
+	DepartmentHead_ID INTEGER,
+	DepartmentName CHAR(20),
+	PRIMARY KEY (Department_ID),
+	FOREIGN KEY (DepartmentHead_ID)
+	REFERENCES Instructor(Staff_ID)
+	   ON DELETE SET NULL
+	);
+
+CREATE TABLE Course
+	(Course_ID INTEGER,
+	Credits INTEGER,
+	CourseName CHAR(20),
+	PRIMARY KEY (Course_ID)
+	);
+
+CREATE TABLE CourseOffering
+	(ClassCode INTEGER,
+	TermOffered CHAR(20),
+	ClassSize INTEGER,
+	PRIMARY KEY (ClassCode)
+	);
+
+CREATE TABLE Student
+	(Major CHAR(20),
+	Minor CHAR(20),
+	Name CHAR(20),
+	Student_ID INTEGER,
+	PRIMARY KEY (Student_ID)
+	);
+
+CREATE TABLE DepartmentAffiliations
+	(Department_ID INTEGER NOT NULL,
+	Staff_ID INTEGER UNIQUE,
+	PRIMARY KEY (Staff_ID, Department_ID),
+	FOREIGN KEY (Staff_ID)
+	REFERENCES Instructor(Staff_ID)
+		ON DELETE CASCADE,
+	FOREIGN KEY (Department_ID)
+	REFERENCES Department(Department_ID)
+		ON DELETE CASCADE
+	);
+
+CREATE TABLE Teaches
+	(ClassCode INTEGER UNIQUE,
+	Staff_ID INTEGER,
+	PRIMARY KEY (Staff_ID, ClassCode),
+	FOREIGN KEY (Staff_ID)
+	REFERENCES Instructor(Staff_ID)
+		ON DELETE CASCADE,
+	FOREIGN KEY (ClassCode)
+	REFERENCES CourseOffering(ClassCode)
+		ON DELETE CASCADE
+	);
+
+CREATE TABLE Registrations
+	(ClassCode INTEGER,
+	Student_ID INTEGER,
+	Date DATE,
+	PRIMARY KEY (Student_ID, ClassCode),
+	FOREIGN KEY (Student_ID)
+	REFERENCES Student(Student_ID)
+		ON DELETE CASCADE,
+	FOREIGN KEY (ClassCode)
+	REFERENCES CourseOffering(ClassCode)
+		ON DELETE CASCADE
+	);
+
+CREATE TABLE HasOffering
+	(ClassCode INTEGER UNIQUE,
+	Course_ID INTEGER NOT NULL,
+	PRIMARY KEY (Course_ID, ClassCode),
+	FOREIGN KEY (Course_ID)
+	REFERENCES Course(Course_ID)
+		ON DELETE CASCADE,
+	FOREIGN KEY (ClassCode)
+	REFERENCES CourseOffering(ClassCode)
+		ON DELETE CASCADE
+	);
